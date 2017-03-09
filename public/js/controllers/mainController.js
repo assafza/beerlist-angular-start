@@ -14,13 +14,23 @@ app.controller('beersCtrl',function ($scope , beersService ){
       style : $scope.style,
       abv : $scope.abv,
       image : $scope.image,
-      rating : $scope.secondRate
+      rating :{
+        counter : 0,
+        totalRanking : 0
+      }
     });
     console.log($scope.beers);
   };
 
    $scope.onItemRating = function(rating , beerIndex){
      $scope.secondRate = rating;
+     $scope.beers[beerIndex].rating.counter ++;
+     $scope.beers[beerIndex].rating.totalRanking += rating;
+    $scope.beers[beerIndex].rating.avg = $scope.avgRating(beerIndex);
    };
+
+   $scope.avgRating = function(beerIndex){
+      return ($scope.beers[beerIndex].rating.totalRanking / $scope.beers[beerIndex].rating.counter);
+   }
 
 });
