@@ -4,23 +4,16 @@ app.controller('beersCtrl',function ($scope , beersService ){
    $scope.secondRate = 0;
    $scope.readOnly = true;
 
-  $scope.delete = function(beerIndex){
-    $scope.beers.splice(beerIndex,1);
-  };
-
-  $scope.addBeer = function(){
-    $scope.beers.push({
-      name : $scope.name,
-      style : $scope.style,
-      abv : $scope.abv,
-      image : $scope.image,
-      rating :{
-        counter : 0,
-        totalRanking : 0
-      }
-    });
-    console.log($scope.beers);
-  };
+   $scope.delete = beersService.deleteBeer;
+   $scope.addBeer = function(){
+       beersService.addBeer({
+       name : $scope.name,
+       style : $scope.style,
+       abv : $scope.abv,
+       image : $scope.image,
+       rating : $scope.secondRate
+     });
+   };
 
    $scope.onItemRating = function(rating , beerIndex){
      $scope.secondRate = rating;
