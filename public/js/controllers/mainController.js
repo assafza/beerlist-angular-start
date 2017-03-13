@@ -3,27 +3,23 @@ app.controller('beersCtrl',function ($scope , beersService ){
   $scope.firstRate = 0;
    $scope.secondRate = 0;
    $scope.readOnly = true;
-
    $scope.delete = beersService.deleteBeer;
    $scope.addBeer = function(){
+     //validate abv number needed for validate integer value
        beersService.addBeer({
        name : $scope.name,
        style : $scope.style,
        abv : $scope.abv,
        image : $scope.image,
-       rating : $scope.secondRate
+       rating : {
+         counter : 0,
+         totalRanking : $scope.secondRate
+       }
      });
    };
-
-   $scope.onItemRating = function(rating , beerIndex){
-     $scope.secondRate = rating;
-     $scope.beers[beerIndex].rating.counter ++;
-     $scope.beers[beerIndex].rating.totalRanking += rating;
-    $scope.beers[beerIndex].rating.avg = $scope.avgRating(beerIndex);
-   };
-
-   $scope.avgRating = function(beerIndex){
-      return ($scope.beers[beerIndex].rating.totalRanking / $scope.beers[beerIndex].rating.counter);
-   }
-
+  $scope.onItemRating = beersService.onItemRating;
+  $scope.calcAvg = beersService.calcAvg;
+  $scope.editBeer = beersService.editBeer;
+  $scope.getBeers = beersService.getBeers;
+   $scope.getBeers();
 });

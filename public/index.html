@@ -15,20 +15,20 @@
                 <div class="page-header">
                 </div>
                 <div class="beerList" ng-repeat = "beer in beers">
-            			<h1>{{beer.name}}</h1>
-            			<p > Style: {{beer.style}}</p>
-            			<p >Abv % : {{beer.abv}}</p>
-                  <p> rating : {{beer.rating.avg}}</p>
+            			<h1><input class = "form" ng-blur="editBeer(beer)"   ng-model="beer.name" >   </input></h1>
+            			<p > Style: <input class = "form" ng-blur="editBeer(beer)"   ng-model="beer.style" >   </input></p>
+            			<p >Abv % : <input class = "form" ng-blur="editBeer(beer)"   ng-model="beer.abv" >   </input></p>
+                  <p> rating : {{calcAvg($index)}} </p>
                   Rate this beer:
                   <jk-rating-stars
                     max-rating="5"
-                    rating="0" on-rating="onItemRating(rating , $index)">
+                    rating="0" on-rating="onItemRating(rating , beer._id)">
                   </jk-rating-stars>
                   <!-- <span >
                     <i class="material-icons" style = "color:yellow" ng-repeat = "i in getNumber(beer.rating) track by $index">star</i>
                   </span> -->
             			<img ng-src="{{beer.image}}" width = "50%" ></img>
-                  <div class ="delete" ng-click = "delete($index)" > Delete </div>
+                  <div class ="delete" ng-click = "delete(beer._id)" > Delete </div>
             		</div><!-- render beers here -->
                 <form ng-submit="addBeer()">
                     <h3>Add a new beer</h3>

@@ -1,19 +1,81 @@
-app.factory('beersService', function(){
-var beerList = [
-  {name : "Corona", style : "Pale Ale", abv : "6%", image : "http://i138.photobucket.com/albums/q248/mattsniz/Islamorada%202009/Coronas.jpg", rating : {counter:3,totalRanking:13, avg : 0}},
-  {name : "Corona", style : "Pale Ale", abv : "6%", image : "http://i138.photobucket.com/albums/q248/mattsniz/Islamorada%202009/Coronas.jpg", rating : {counter:2,totalRanking:8, avg: 0}}
-];
-var deleteBeer = function(beerIndex){
-  beerList.splice(beerIndex,1);
+app.factory('beersService', function($http){
+var beerList = [];
+
+var deleteBeer = function(beerID){
+  return $http.delete('/beers/'+beerID)
+    .then(function(response) {
+      getBeers();
+    }, function(err) {
+      console.error(err)
+    });
 }
 
 var addBeer = function(beer){
-  beerList.push(beer);
+  return $http.post('/beers' , beer)
+    .then(function(response) {
+      console.log(beerList)
+      getBeers();
+    }, function(err) {
+      console.error(err)
+    });
+  // beerList.push(beer);
 };
 
-  return {
-    beerList : beerList,
+var getBeers = function() {
+  return $http.get('/beers')
+    .then(function(response) {
+      angular.copy(response.data, beerList);
+    }, function(err) {
+      console.error(err)
+    });
+};
+
+var updateBeer = function(beerID){
+  return $http.delete('/beers/'+beerID)
+    .then(function(response) {
+      getBeers();
+    }, function(err) {
+      console.error(err)
+    });
+  // beerList.splice(beerIndex,1);
+}
+var onItemRating = function(rating , beerID){
+  return $http.put('/beers/'+beerID+'/rating',{newRating:rating})
+    .then(function(response) {
+      getBeers();
+      console.log(beerList);
+    }, function(err) {
+      console.error(err)
+    });
+}
+
+var calcAvg = function (beerIndex){
+  if (beerList[beerIndex].rating.counter !=0 ){
+    return(beerList[beerIndex].rating.totalRanking / beerList[beerIndex].rating.counter);
+  }
+  else {
+    return 0;
+  }
+}
+
+  var editBeer = function(beer){
+    // console.log(id);
+    return $http.put('/beers/'+beer._id , beer)
+      .then(function(response) {
+        getBeers();
+        console.log(beerList);
+      }, function(err) {
+        console.error(err)
+      });
+  }
+
+    return {
+    beerList   : beerList,
     deleteBeer : deleteBeer,
-    addBeer : addBeer
+    addBeer    : addBeer,
+    getBeers   : getBeers,
+    onItemRating : onItemRating,
+    calcAvg    : calcAvg,
+    editBeer   : editBeer
   };
 });
