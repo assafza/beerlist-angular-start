@@ -9,12 +9,11 @@ var beerSchema = new Schema({
   image : String,
   rating : {
     counter : Number,
-    totalRanking : Number,
-    avg : Number
+    totalRanking : Number
   }
 });
 
 //creating a model of a schema object personSchema
 var Beer = mongoose.model('Beer', beerSchema);
-//in order to user Beer model in other files we need to export this 
+//in order to user Beer model in other files we need to export this
 module.exports = Beer;

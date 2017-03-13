@@ -11,7 +11,7 @@ app.use(bodyParser.urlencoded({ extended: false }));//default when using body-pa
 var mongoose = require('mongoose');
 mongoose.connect('mongodb://localhost/beers');
 // './' - this tells node that we are requiring a "local" module and not something we installed with NPM.
-var Beer = require("./BeerModel");
+var Beer = require("./models/BeerModel");
 
 app.get('/', function(req, res, next) {
   res.send('Testing Server')
@@ -65,6 +65,44 @@ app.put('/beers/:id', function (req,res,next){
       }
   });
 });
+
+
+
+//put request to update specific item in the DB
+app.put('/beers/:id/rating', function (req,res,next){
+  Beer.findOneAndUpdate({_id : req.params.id}, {
+    "$inc": {
+        "rating.counter" : 1,
+        "rating.totalRanking" : req.body.newRating
+    }
+}, {new : true}, function (err , updatedBeer){
+      if (err){
+        console.error(err)
+        return next(err);
+      }
+      else{
+        res.send(updatedBeer);
+      }
+  });
+});
+
+// error handler to catch 404 and forward to main error handler
+app.use(function(req, res, next) {
+  var err = new Error('Not Found');
+  err.status = 404;
+  next(err);
+});
+
+// main error handler
+// warning - not for use in production code!
+app.use(function(err, req, res, next) {
+  res.status(err.status || 500);
+  res.render('error', {
+    message: err.message,
+    error: err
+  });
+});
+
 
 app.listen(8000, function() {
   console.log("Fullstack project. Listening on 8000.")
