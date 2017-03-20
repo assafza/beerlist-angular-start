@@ -25,5 +25,8 @@ app.controller('beersCtrl',function ($scope , beersService ){
   $scope.updateBeer = beersService.updateBeer;
   $scope.getBeers = beersService.getBeers;
   $scope.getBeers();
+  $scope.addReview = function (){
+    beersService.addReview(0, {author : "Assaf" , text:"controller"});
+    }
 
 });

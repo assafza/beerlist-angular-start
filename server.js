@@ -86,6 +86,53 @@ app.put('/beers/:id/rating', function (req,res,next){
   });
 });
 
+//add review to a beer
+app.post('/beers/:id/reviews', function(req, res, next) {
+  Beer.findById(req.params.id, function(err, foundBeer) {
+    if (err) {
+      console.error(err);
+      return next(err);
+    } else if (!foundBeer) {
+      return res.send("Error! No beer found with that ID");
+    } else {
+      foundBeer.reviews.push(req.body)
+      foundBeer.save(function(err, updatedBeer) {
+        if (err) {
+          return next(err);
+        } else {
+          res.send(updatedBeer);
+        }
+      });
+    }
+  });
+});
+
+//delete specific review
+app.delete('/beers/:beerid/reviews/:reviewid', function(req, res, next) {
+  Beer.findById(req.params.beerid, function(err, foundBeer) {
+    if (err) {
+      return next(err);
+    } else if (!foundBeer) {
+      return res.send("Error! No beer found with that ID");
+    } else {
+      var reviewToDelete = foundBeer.reviews.id(req.params.reviewid)
+      if (reviewToDelete) {
+        reviewToDelete.remove()
+        foundBeer.save(function(err, updatedBeer) {
+          if (err) {
+            return next(err);
+          } else {
+            res.send(updatedBeer);
+          }
+        });
+      } else {
+        return res.send("Error! No review found with that ID");
+      }
+    }
+  });
+});
+
+
 // error handler to catch 404 and forward to main error handler
 app.use(function(req, res, next) {
   var err = new Error('Not Found');
@@ -102,6 +149,8 @@ app.use(function(err, req, res, next) {
     error: err
   });
 });
+
+
 
 
 app.listen(8000, function() {

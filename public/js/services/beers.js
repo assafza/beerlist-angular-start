@@ -68,6 +68,15 @@ var updateBeer = function(index){
       });
   }
 
+  var addReview = function(beerIndex, review){
+    return $http.post('/beers/'+beerList[beerIndex]._id+'/reviews', review)
+    .then(function(updatedBeer){
+      console.log(updatedBeer)
+    }, function (err){
+      console.log(err)
+    })
+  }
+
     return {
     beerList   : beerList,
     deleteBeer : deleteBeer,
@@ -77,6 +86,7 @@ var updateBeer = function(index){
     calcAvg    : calcAvg,
     editBeer   : editBeer,
     updateBeer : updateBeer,
-    updatingBeers : updatingBeers
+    updatingBeers : updatingBeers,
+    addReview : addReview
   };
 });
