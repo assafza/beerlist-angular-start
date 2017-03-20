@@ -1,5 +1,7 @@
 app.controller('beersCtrl',function ($scope , beersService ){
   $scope.beers = beersService.beerList;
+  $scope.updatingBeers = beersService.updatingBeers;
+  $scope.edit = 0;
   $scope.firstRate = 0;
    $scope.secondRate = 0;
    $scope.readOnly = true;
@@ -20,6 +22,8 @@ app.controller('beersCtrl',function ($scope , beersService ){
   $scope.onItemRating = beersService.onItemRating;
   $scope.calcAvg = beersService.calcAvg;
   $scope.editBeer = beersService.editBeer;
+  $scope.updateBeer = beersService.updateBeer;
   $scope.getBeers = beersService.getBeers;
-   $scope.getBeers();
+  $scope.getBeers();
+
 });
