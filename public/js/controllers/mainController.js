@@ -1,4 +1,4 @@
-app.controller('beersCtrl',function ($scope , beersService ){
+app.controller('mainController',function ($scope , beersService ){
   $scope.beers = beersService.beerList;
   $scope.updatingBeers = beersService.updatingBeers;
   $scope.edit = 0;
