@@ -100,7 +100,7 @@ app.post('/beers/:id/reviews', function(req, res, next) {
         if (err) {
           return next(err);
         } else {
-          res.send(updatedBeer);
+          res.send(req.body);
         }
       });
     }
@@ -132,8 +132,23 @@ app.delete('/beers/:beerid/reviews/:reviewid', function(req, res, next) {
   });
 });
 
+//get beer by ID
+app.get('/beers/:id', function(req, res, next) {
+  Beer.findById(req.params.id, function(error, beer) {
+    if (error) {
+      console.error(error)
+      return next(error);
+    } else {
+      res.send(beer);
+    }
+  });
+});
 
-// error handler to catch 404 and forward to main error handler
+app.all('*', function(req, res) {
+  res.sendFile(__dirname + "/public/index.html")
+})
+
+//error handler to catch 404 and forward to main error handler
 app.use(function(req, res, next) {
   var err = new Error('Not Found');
   err.status = 404;
@@ -149,9 +164,6 @@ app.use(function(err, req, res, next) {
     error: err
   });
 });
-
-
-
 
 app.listen(8000, function() {
   console.log("Fullstack project. Listening on 8000.")

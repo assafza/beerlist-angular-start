@@ -1,0 +1,35 @@
+<div class="page-header">
+  <a ui-sref="home">Home</a>
+  <h3>
+    <span>{{beer.name}}</span>
+  </h3>
+</div>
+
+<div class="container" >
+    <div class="row">
+        <div class="col-md-6 col-md-offset-3">
+<!-- Print reviews-->
+<div class="reviewsList jumbotron text-left" ng-repeat = "review in beer.reviews">
+  <p> Name: {{review.author}}</p>
+  <p> Review : "{{review.text}}"</p>
+  <button type ="button" ng-click = "delete(review._id)"> Delete review </button>
+</div>
+
+<!-- add review-->
+<form ng-submit="addReview()">
+    <h3>Add review for {{beer.name}}</h3>
+    <div class="form-group">
+        <input type="text" class="form-control" placeholder="Author Name" ng-model="reviewAuthor"></input>
+    </div>
+    <div class="form-group">
+        <input type="text" class="form-control" placeholder="Review" ng-model="reviewText"></input>
+    </div>
+    <button type="submit" class="btn btn-primary">Add Review</button>
+</form>
+<!-- -->
+</div>
+</div>
+</div>
+
+
+</div>
