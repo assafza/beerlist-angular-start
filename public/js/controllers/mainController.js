@@ -22,6 +22,7 @@ app.controller('mainController',function ($scope , beersService ){
   $scope.onItemRating = beersService.onItemRating;
   $scope.calcAvg = beersService.calcAvg;
   $scope.editBeer = beersService.editBeer;
+    $scope.cancelEdit = beersService.cancelEdit;
   $scope.updateBeer = beersService.updateBeer;
   $scope.getBeers = beersService.getBeers;
   $scope.getBeers();

@@ -1,5 +1,12 @@
 
 var express = require('express');
+//a framework for authentication on node.js
+var passport = require('passport');
+//in order to create sessions for users
+var expressSession = require('express-session');
+var LocalStrategy = require('passport-local').Strategy;
+var User = require("./models/userModel");
+
 var app = express();
 app.use(express.static('public'));
 app.use(express.static('node_modules'));
@@ -8,141 +15,34 @@ var bodyParser = require('body-parser');// a package (npm install body-parser) t
 app.use(bodyParser.json());//default when using body-parser
 app.use(bodyParser.urlencoded({ extended: false }));//default when using body-parser
 
+
+//This tells express to use the express-session
+//middleware and configure it with a secret key.
+app.use(expressSession({ secret: 'thisIsASecret', resave: false, saveUninitialized: false }));;
+app.use(passport.initialize());
+//This makes sure our app is using passport's session middleware!
+app.use(passport.session());
+passport.use(User.createStrategy()); //Thanks to m-l-p there is no need to create a local strategy
+//This code supplies passport with the serializeUser callback function
+passport.serializeUser(function (user, done) {
+  done(null, user.username);
+});
+passport.deserializeUser(function (user, done) {
+  done(null, user);
+});
+
 var mongoose = require('mongoose');
 mongoose.connect('mongodb://localhost/beers');
 // './' - this tells node that we are requiring a "local" module and not something we installed with NPM.
-var Beer = require("./models/BeerModel");
+var beerRoutes = require('./routes/beerRoutes');
+var userRoutes = require('./routes/userRoutes');
 
-app.get('/', function(req, res, next) {
-  res.send('Testing Server')
-})
+//This tells the server that when a request comes into '/beers'
+//that it should use the routes in 'beerRoutes'
+//and those are in our new beerRoutes.js file
+app.use('/beers', beerRoutes);
+app.use('/users', userRoutes);
 
-//print all beers in DB on route /beers
-app.get('/beers', function (req, res, next) {
-  Beer.find(function (error, beers) {
-    if (error) {
-      console.error(error)
-      return next(error);
-    } else {
-      res.send(beers);
-    }
-  });
-});
-
-//post request route that takes body object and save it to DB
-app.post('/beers', function (req, res, next) {
-  var beer = new Beer(req.body);//create a new beer instance with request.body params
-  beer.save(function(err, beer) {
-    if (err) {
-      console.error(err)
-      return next(err);
-    } else {
-      res.send(beer);
-    }
-  });
-});
-
-//post request route that takes body object and save it to DB
-app.delete('/beers/:id', function(req, res, next) {
-  Beer.remove({ _id: req.params.id }, function(err) {
-    if (err) {
-      console.error(err)
-      return next(err);
-    } else {
-      res.send("Beer Deleted");
-    }
-  });
-});
-//put request to update specific item in the DB
-app.put('/beers/:id', function (req,res,next){
-  Beer.findOneAndUpdate({_id : req.params.id}, req.body, {new : true}, function (err , updatedBeer){
-      if (err){
-        console.error(err)
-        return next(err);
-      }
-      else{
-        res.send(updatedBeer);
-      }
-  });
-});
-
-
-
-//put request to update specific item in the DB
-app.put('/beers/:id/rating', function (req,res,next){
-  Beer.findOneAndUpdate({_id : req.params.id}, {
-    "$inc": {
-        "rating.counter" : 1,
-        "rating.totalRanking" : req.body.newRating
-    }
-}, {new : true}, function (err , updatedBeer){
-      if (err){
-        console.error(err)
-        return next(err);
-      }
-      else{
-        res.send(updatedBeer);
-      }
-  });
-});
-
-//add review to a beer
-app.post('/beers/:id/reviews', function(req, res, next) {
-  Beer.findById(req.params.id, function(err, foundBeer) {
-    if (err) {
-      console.error(err);
-      return next(err);
-    } else if (!foundBeer) {
-      return res.send("Error! No beer found with that ID");
-    } else {
-      foundBeer.reviews.push(req.body)
-      foundBeer.save(function(err, updatedBeer) {
-        if (err) {
-          return next(err);
-        } else {
-          res.send(req.body);
-        }
-      });
-    }
-  });
-});
-
-//delete specific review
-app.delete('/beers/:beerid/reviews/:reviewid', function(req, res, next) {
-  Beer.findById(req.params.beerid, function(err, foundBeer) {
-    if (err) {
-      return next(err);
-    } else if (!foundBeer) {
-      return res.send("Error! No beer found with that ID");
-    } else {
-      var reviewToDelete = foundBeer.reviews.id(req.params.reviewid)
-      if (reviewToDelete) {
-        reviewToDelete.remove()
-        foundBeer.save(function(err, updatedBeer) {
-          if (err) {
-            return next(err);
-          } else {
-            res.send(updatedBeer);
-          }
-        });
-      } else {
-        return res.send("Error! No review found with that ID");
-      }
-    }
-  });
-});
-
-//get beer by ID
-app.get('/beers/:id', function(req, res, next) {
-  Beer.findById(req.params.id, function(error, beer) {
-    if (error) {
-      console.error(error)
-      return next(error);
-    } else {
-      res.send(beer);
-    }
-  });
-});
 
 app.all('*', function(req, res) {
   res.sendFile(__dirname + "/public/index.html")
