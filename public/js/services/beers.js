@@ -52,7 +52,7 @@ var calcAvg = function (beerIndex){
 }
 
 var editBeer = function(beer,index){
-  updatingBeers[index]= beer;
+  updatingBeers[index]= angular.copy(beer);
 }
 
 var updateBeer = function(index){
@@ -66,6 +66,11 @@ var updateBeer = function(index){
       }, function(err) {
         console.error(err)
       });
+  }
+
+  var cancelEdit = function($index){
+
+  updatingBeers[$index] = null;
   }
 
   var addReview = function(beerID, review){
@@ -109,6 +114,7 @@ var updateBeer = function(index){
     updatingBeers : updatingBeers,
     addReview : addReview,
     getBeerByID : getBeerByID,
-    deleteReview : deleteReview
+    deleteReview : deleteReview,
+    cancelEdit : cancelEdit
   };
 });

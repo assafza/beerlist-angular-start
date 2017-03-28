@@ -8,9 +8,9 @@
 
             <div class="beerList" ng-repeat = "beer in beers  track by $index">
               <div ng-if="!updatingBeers[$index]">
-                <h1>  <input class = "form"  ng-model="beer.name" >   </input></h1>
-                <p > Style: <input class = "form" ng-blur="editBeer(beer)" ng-model="beer.style" >   </input></p>
-                <p >Abv % :  <input class = "form" ng-blur="editBeer(beer)" ng-model="beer.abv" >   </input></p>
+                <h1>  <input class = "form"  ng-model="beer.name" disabled>   </input></h1>
+                <p > Style: <input class = "form" ng-blur="editBeer(beer)" ng-model="beer.style" disabled>   </input></p>
+                <p >Abv % :  <input class = "form" ng-blur="editBeer(beer)" ng-model="beer.abv" disabled>   </input></p>
                 <p> rating : {{calcAvg($index)}} </p>
                 Rate this beer:
                 <jk-rating-stars max-rating="10" rating="0" on-rating="onItemRating(rating , beer._id)"> </jk-rating-stars>
@@ -23,7 +23,7 @@
 
               <!-- edit beer section form-->
               <form ng-if="updatingBeers[$index]">
-                  <h3>Edit Mode - {{beer.name}}</h3>
+                  <h3>Edit Mode </h3>
                   <div class="form-group">
                       <input type="text" class="form-control" ng-model="updatingBeers[$index].name"></input>
                   </div>
@@ -37,7 +37,7 @@
                       <input type="text" class="form-control"  ng-model="updatingBeers[$index].image"></input>
                   </div>
                   <button type="button" class="btn btn-primary" ng-click = "updateBeer($index)">Save Beer</button>
-                  <button type="button" class="btn btn-primary" ng-click = "updatingBeers[$index] = null">Cancel</button>
+                  <button type="button" class="btn btn-primary" ng-click = "cancelEdit($index)">Cancel</button>
               </form>
                 <!-- END edit beer section form-->
 
