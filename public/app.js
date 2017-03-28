@@ -29,4 +29,9 @@ app.config(function($stateProvider, $urlRouterProvider, $locationProvider) {
   controller: 'authController'
   })
 
+  .state('login', {
+    url: '/login',
+    templateUrl: '/templates/login.html',
+    controller: 'authController'
+  })
 });

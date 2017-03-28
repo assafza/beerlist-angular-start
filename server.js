@@ -24,12 +24,8 @@ app.use(passport.initialize());
 app.use(passport.session());
 passport.use(User.createStrategy()); //Thanks to m-l-p there is no need to create a local strategy
 //This code supplies passport with the serializeUser callback function
-passport.serializeUser(function (user, done) {
-  done(null, user.username);
-});
-passport.deserializeUser(function (user, done) {
-  done(null, user);
-});
+passport.serializeUser(User.serializeUser());
+passport.deserializeUser(User.deserializeUser());
 
 var mongoose = require('mongoose');
 mongoose.connect('mongodb://localhost/beers');
@@ -49,21 +45,17 @@ app.all('*', function(req, res) {
 })
 
 //error handler to catch 404 and forward to main error handler
-app.use(function(req, res, next) {
-  var err = new Error('Not Found');
-  err.status = 404;
-  next(err);
-});
+// app.use(function(req, res, next) {
+//   var err = new Error('Not Found');
+//   err.status = 404;
+//   next(err);
+// });
 
 // main error handler
-// warning - not for use in production code!
-app.use(function(err, req, res, next) {
-  res.status(err.status || 500);
-  res.render('error', {
-    message: err.message,
-    error: err
-  });
-});
+//warning - not for use in production code!
+// app.use(function(err, req, res, next) {
+//   res.status(err.status || 500).json(err);
+// });
 
 app.listen(8000, function() {
   console.log("Fullstack project. Listening on 8000.")

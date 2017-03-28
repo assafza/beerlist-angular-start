@@ -2,6 +2,14 @@ var express = require('express');
 var router = express.Router();
 var Beer = require("../models/BeerModel");
 
+var ensureAuthenticated = function(req, res, next) {
+  if (req.isAuthenticated()) {
+    return next();
+  } else {
+    return res.send(401, { message: "Unauthorized" });
+  }
+};
+
 //print all beers in DB on route /beers
 router.get('/', function (req, res, next) {
   Beer.find(function (error, beers) {
@@ -15,7 +23,7 @@ router.get('/', function (req, res, next) {
 });
 
 //post request route that takes body object and save it to DB
-router.post('/', function (req, res, next) {
+router.post('/',ensureAuthenticated, function (req, res, next) {
   var beer = new Beer(req.body);//create a new beer instance with request.body params
   beer.save(function(err, beer) {
     if (err) {
@@ -28,7 +36,7 @@ router.post('/', function (req, res, next) {
 });
 
 //post request route that takes body object and save it to DB
-router.delete('/:id', function(req, res, next) {
+router.delete('/:id', ensureAuthenticated, function(req, res, next) {
   Beer.remove({ _id: req.params.id }, function(err) {
     if (err) {
       console.error(err)
